@@ -1,31 +1,44 @@
----
+name: MLflow
 version: 1.0.0
 slug: mlflow
-name: MLflow
 description: MLflow tracking server for managing machine learning experiments, models, and artifacts
 url: https://github.com/WickM/mlflow-hassio-addon
+webui: "[PROTO:ssl]://[HOST]:[PORT:5000]"
 arch:
   - aarch64
   - amd64
-image: homeassistant/{arch}-addon-mlflow
 init: false
-options:
-  port: 5000
-  storage_path: /mlflow
-  backend_store_uri: sqlite:///mlflow.db
-  default_artifact_root: /mlflow/artifacts
-  host: 0.0.0.0
-  workers: 4
+hasso_api: true
+map:
+  - type: mlflow
+    read_only: false
+  - type: share
+    read_only: false
+  - type: ssl
+backup: cold
+backup_exclude:
+  - "**/logs"
+  - "**/artifacts"
 schema:
+  TZ: str?
   port: int
   storage_path: str
   backend_store_uri: str
   default_artifact_root: str
   host: str
   workers: int
+  git_enabled: bool
+options:
+  TZ: Etc/UTC
+  port: 5000
+  storage_path: /mlflow
+  backend_store_uri: sqlite:///mlflow/mlflow.db
+  default_artifact_root: /mlflow/artifacts
+  host: 0.0.0.0
+  workers: 4
+  git_enabled: false
 ports:
   5000/tcp: 5000
-startup: services
-watchdog: tcp://[HOST]:5000
-map:
-  - mlflow:rw
+ports_description:
+  5000/tcp: MLflow Web UI
+image: wickm/mlflow-hassio-addon

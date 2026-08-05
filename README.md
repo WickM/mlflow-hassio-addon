@@ -12,6 +12,8 @@ Run an **MLflow tracking server** as a Home Assistant Supervisor add-on — mana
 - 🐳 **Docker-based** — runs as a managed Supervisor add-on container
 - 🔒 **Network-isolated** — accessible only from your HA network
 - ⚡ **Zero Config** — works out of the box with sensible defaults
+- 🔀 **Git Support** — optional git integration for versioning experiments
+- 🌐 **Web UI** — accessible via the Home Assistant frontend
 
 ## 📦 Installation
 
@@ -26,12 +28,22 @@ Run an **MLflow tracking server** as a Home Assistant Supervisor add-on — mana
 
 | Option | Default | Description |
 |--------|---------|-------------|
+| `TZ` | `Etc/UTC` | Timezone |
 | `port` | `5000` | Port for the MLflow server |
 | `storage_path` | `/mlflow` | Path for persistent storage |
-| `backend_store_uri` | `sqlite:///mlflow.db` | MLflow backend store URI |
+| `backend_store_uri` | `sqlite:///mlflow/mlflow.db` | MLflow backend store URI |
 | `default_artifact_root` | `/mlflow/artifacts` | Root for model artifacts |
 | `host` | `0.0.0.0` | Bind address |
 | `workers` | `4` | Number of gunicorn workers |
+| `git_enabled` | `false` | Enable git integration for experiments |
+
+### Map Options
+
+| Map | Read-Only | Description |
+|-----|-----------|-------------|
+| `mlflow` | No | Persistent MLflow data directory |
+| `share` | No | Share directory for cross-add-on data |
+| `ssl` | Yes | SSL certificates for secure access |
 
 ## 🌐 Access
 
@@ -40,6 +52,8 @@ Once running, the MLflow UI is available at:
 ```
 http://<home-assistant-ip>:5000
 ```
+
+Or via the Home Assistant frontend if using the Supervisor add-on store.
 
 ## 🐍 Usage from Home Assistant
 
@@ -60,14 +74,15 @@ with mlflow.start_run():
 ```
 mlflow-hassio-addon/
 ├── config.yaml          # Add-on manifest (port, storage, workers, etc.)
-├── Dockerfile           # Builds from HA base image, installs MLflow
+├── Dockerfile           # Builds from HA base image, installs MLflow + s6-overlay
 ├── run.sh               # Entrypoint — starts mlflow server
 ├── build.json           # Build targets for aarch64 + amd64
 ├── README.md            # This file
+├── screenshot.png       # MLflow UI screenshot
 └── rootfs/
     ├── etc/
     │   ├── cont-init.d/10-config   # Init: creates dirs, sets permissions
-    │   └── services.d/mlflow/run   # Service runner
+    │   └── services.d/mlflow/run   # Service runner via s6-overlay
     └── mlflow-data/                # Persistent data directory
 ```
 
