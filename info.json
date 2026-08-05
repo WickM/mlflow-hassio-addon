@@ -1,0 +1,6 @@
+{
+  "name": "MLflow Add-on Repository",
+  "version": "1.0.0",
+  "slug": "mlflow-hassio-addon",
+  "description": "MLflow tracking server add-on for Home Assistant"
+}

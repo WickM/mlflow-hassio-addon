@@ -8,13 +8,10 @@ arch:
   - aarch64
   - amd64
 init: false
-hasso_api: true
 map:
-  - type: mlflow
-    read_only: false
-  - type: share
-    read_only: false
-  - type: ssl
+  - mlflow
+  - share
+  - ssl
 backup: cold
 backup_exclude:
   - "**/logs"
