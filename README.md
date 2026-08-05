@@ -2,7 +2,6 @@
 
 Run an **MLflow tracking server** as a Home Assistant Supervisor add-on — manage experiments, log metrics, and track model artifacts right from your HA network.
 
-![MLflow UI](https://raw.githubusercontent.com/WickM/mlflow-hassio-addon/main/screenshot.png)
 
 ## ✨ Features
 
