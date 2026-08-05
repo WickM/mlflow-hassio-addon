@@ -1,4 +1,4 @@
 build:
   from:
-    aarch64: ghcr.io/home-assistant/aarch64-base:stable
-    amd64: ghcr.io/home-assistant/amd64-base:stable
+    aarch64: ghcr.io/mlflow/mlflow:latest
+    amd64: ghcr.io/mlflow/mlflow:latest

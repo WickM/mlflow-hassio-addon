@@ -1,7 +1,6 @@
 # check=skip=SecretsUsedInArgOrEnv
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:stable
 
-FROM ${BUILD_FROM}
+FROM ghcr.io/mlflow/mlflow:latest
 
 ENV \
     SERVICE_PORT=5000 \
@@ -19,19 +18,13 @@ ARG S6_OVERLAY_VERSION="3.2.1.0"
 # renovate: datasource=github-releases packageName=home-assistant/tempio
 ARG TEMPIO_VERSION="2024.11.2"
 RUN \
-    apk add --no-cache --virtual .build-dependencies \
-        tar \
-        xz \
-    \
-    && apk add --no-cache \
+    apt-get update && apt-get install -y --no-install-recommends \
         bash \
         curl \
         jq \
         tzdata \
-        git \
-        python3 \
-        py3-pip \
-        py3-wheel \
+        tar \
+        xz-utils \
     \
     && S6_ARCH="${BUILD_ARCH}" \
     && if [ "${BUILD_ARCH}" = "amd64" ]; then S6_ARCH="x86_64"; fi \
@@ -62,14 +55,8 @@ RUN \
         "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_${BUILD_ARCH}" \
     && chmod a+x /usr/bin/tempio \
     \
-    && pip3 install --break-system-packages --no-cache-dir \
-        mlflow \
-        sqlalchemy \
-        alembic \
-    \
-    && apk del --no-cache --purge .build-dependencies \
-    && rm -f -r \
-        /tmp/*
+    && apt-get purge -y --auto-remove \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY rootfs /
 
