@@ -1,5 +1,5 @@
 name: MLflow
-version: 1.0.0
+version: latest
 slug: mlflow
 description: MLflow tracking server for managing machine learning experiments, models, and artifacts
 url: https://github.com/WickM/mlflow-hassio-addon
