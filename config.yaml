@@ -10,7 +10,6 @@ arch:
 init: true
 startup: services
 map:
-  - mlflow
   - share
   - ssl
 backup: cold
@@ -23,7 +22,6 @@ schema:
   storage_path: str
   backend_store_uri: str
   default_artifact_root: str
-  host: str
   workers: int
   git_enabled: bool
 options:
@@ -32,7 +30,6 @@ options:
   storage_path: /mlflow
   backend_store_uri: sqlite:///mlflow/mlflow.db
   default_artifact_root: /mlflow/artifacts
-  host: 0.0.0.0
   workers: 4
   git_enabled: false
 ports:
