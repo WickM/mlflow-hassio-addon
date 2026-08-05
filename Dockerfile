@@ -61,6 +61,7 @@ RUN \
 COPY rootfs /
 
 ENTRYPOINT ["/init"]
+CMD []
 
 ARG BUILD_VERSION \
     BUILD_DATE \
