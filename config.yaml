@@ -36,6 +36,12 @@ options:
   git_enabled: false
   allowed_hosts: "*"
   cors_origins: "*"
+# MLflow 3.x FastAPI security middleware (HostValidationMiddleware + CORS)
+# reads MLFLOW_SERVER_ALLOWED_HOSTS / MLFLOW_SERVER_CORS_ALLOWED_ORIGINS from
+# the env. The CLI flags in run.sh are kept for backwards compat but only
+# affect the legacy Flask app. The defaults in Dockerfile ENV are "*" so
+# HA ingress (which rewrites the Host header) can reach the UI without
+# 403s. Override via the add-on Configuration tab if exposing publicly.
 ports:
   5000/tcp: 5000
 ports_description:

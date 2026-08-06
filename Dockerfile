@@ -11,7 +11,15 @@ ENV \
     S6_CMD_WAIT_FOR_SERVICES=1 \
     S6_VERBOSITY=0 \
     SERVICE_PORT=5000 \
-    MLFLOW_PORT=5000
+    MLFLOW_PORT=5000 \
+    # MLflow 3.x FastAPI security middleware (Host header + CORS) reads these
+    # env vars. CLI flags `--allowed-hosts` / `--cors-allowed-origins` only
+    # affect the legacy Flask middleware; the FastAPI app ignores them.
+    # Default "*" so HA ingress (which rewrites the Host header) can reach
+    # the UI. Users can lock down via add-on options. See:
+    # https://github.com/mlflow/mlflow/blob/master/mlflow/server/security_utils.py
+    MLFLOW_SERVER_ALLOWED_HOSTS="*" \
+    MLFLOW_SERVER_CORS_ALLOWED_ORIGINS="*"
 
 # Shell
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
