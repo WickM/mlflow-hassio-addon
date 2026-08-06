@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-set -e
+# s6-overlay cont-init: runs once at boot, before services.
+# Be tolerant — log diagnostics but don't abort boot if a check fails.
+set +e
+
+echo "[10-config] uid=$(id -u) cwd=$(pwd)"
+echo "[10-config] /run.sh exists=$( [ -f /run.sh ] && echo yes || echo no )  exec=$( [ -x /run.sh ] && echo yes || echo no )"
+echo "[10-config] mlflow on PATH: $(command -v mlflow || echo 'NOT FOUND')"
+echo "[10-config] python: $(command -v python || command -v python3 || echo 'NOT FOUND')"
 
 mkdir -p /mlflow/artifacts /mlflow/data
 chmod 777 /mlflow/artifacts /mlflow/data
+echo "[10-config] /mlflow ready: $(ls -ld /mlflow /mlflow/artifacts /mlflow/data)"
