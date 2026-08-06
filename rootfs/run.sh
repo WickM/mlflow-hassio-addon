@@ -9,11 +9,17 @@ BACKEND_STORE_URI="${BACKEND_STORE_URI:-sqlite:///mlflow/mlflow.db}"
 DEFAULT_ARTIFACT_ROOT="${DEFAULT_ARTIFACT_ROOT:-/mlflow/artifacts}"
 STORAGE_PATH="${STORAGE_PATH:-/mlflow}"
 
+# MLflow 3.x security middleware blocks non-localhost requests unless these are set.
+# Default to "*" so the Web UI is reachable from HA / other containers on the host.
+# Users can lock down via addon options if exposing publicly.
+ALLOWED_HOSTS="${ALLOWED_HOSTS:-*}"
+CORS_ORIGINS="${CORS_ORIGINS:-*}"
+
 # Diagnostic: log environment + tool locations so failures are debuggable from HA log
 echo "[run.sh] uid=$(id -u) cwd=$(pwd) PATH=$PATH"
 echo "[run.sh] mlflow binary: $(command -v mlflow || echo 'NOT FOUND on PATH')"
 echo "[run.sh] python: $(command -v python || command -v python3 || echo 'NOT FOUND')"
-echo "[run.sh] PORT=$PORT HOST=$HOST WORKERS=$WORKERS"
+echo "[run.sh] PORT=$PORT HOST=$HOST WORKERS=$WORKERS ALLOWED_HOSTS=$ALLOWED_HOSTS CORS_ORIGINS=$CORS_ORIGINS"
 
 # Ensure storage directories exist (defensive — cont-init should have done this)
 mkdir -p "${STORAGE_PATH}/artifacts" "${STORAGE_PATH}/data"
@@ -28,7 +34,9 @@ if [ -n "${MLFLOW_BIN}" ] && [ -x "${MLFLOW_BIN}" ]; then
         --port "${PORT}" \
         --backend-store-uri "${BACKEND_STORE_URI}" \
         --default-artifact-root "${DEFAULT_ARTIFACT_ROOT}" \
-        --workers "${WORKERS}"
+        --workers "${WORKERS}" \
+        --allowed-hosts "${ALLOWED_HOSTS}" \
+        --cors-allowed-origins "${CORS_ORIGINS}"
 else
     PY="$(command -v python || command -v python3)"
     echo "[run.sh] starting mlflow via ${PY} -m mlflow"
@@ -37,5 +45,7 @@ else
         --port "${PORT}" \
         --backend-store-uri "${BACKEND_STORE_URI}" \
         --default-artifact-root "${DEFAULT_ARTIFACT_ROOT}" \
-        --workers "${WORKERS}"
+        --workers "${WORKERS}" \
+        --allowed-hosts "${ALLOWED_HOSTS}" \
+        --cors-allowed-origins "${CORS_ORIGINS}"
 fi

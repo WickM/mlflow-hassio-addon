@@ -24,6 +24,8 @@ schema:
   default_artifact_root: str
   workers: int
   git_enabled: bool
+  allowed_hosts: str
+  cors_origins: str
 options:
   TZ: Etc/UTC
   port: 5000
@@ -32,6 +34,8 @@ options:
   default_artifact_root: /mlflow/artifacts
   workers: 4
   git_enabled: false
+  allowed_hosts: "*"
+  cors_origins: "*"
 ports:
   5000/tcp: 5000
 ports_description:
