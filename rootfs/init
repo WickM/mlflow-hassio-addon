@@ -1,0 +1,30 @@
+#!/bin/sh -e
+
+# Custom init for HA addon on a non-HA base image.
+#
+# Why this exists: s6-overlay-v3's stock /init calls s6-overlay-suexec, which
+# REQUIRES running as PID 1. HA Supervisor wraps containers in its own
+# supervisor shell, so when /init runs in HA, the actual PID 1 is HA's wrapper,
+# not /init. s6-overlay-suexec then prints "can only run as pid 1" and exits.
+#
+# This init bypasses s6-overlay-suexec and invokes s6-overlay's preinit and
+# stage0 directly. We run as root inside the container (HA addons always do),
+# so we don't need suid privilege-dropping.
+
+S6_DIR=/package/admin/s6-overlay-3.2.1.0
+
+# Make sure /command and friends are on PATH for everything we exec.
+export PATH="/command:/usr/bin:/bin:/usr/local/bin:${PATH}"
+
+# Wait for the Docker readiness notification, if any.
+if read _ 2>/dev/null <&3 ; then
+    exec 3<&-
+fi
+
+# Run s6-overlay's preinit (does /run checks, env setup) — it does not call
+# s6-overlay-suexec itself, so it's safe to run as a regular process.
+"$S6_DIR/libexec/preinit"
+
+# Generate the runtime init tree and exec into s6-linux-init's stage 1.
+# stage0 forks the long-running supervisor, so we don't need it to be PID 1.
+exec "$S6_DIR/libexec/stage0"
