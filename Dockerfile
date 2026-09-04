@@ -1,6 +1,10 @@
 # check=skip=SecretsUsedInArgOrEnv
 
-FROM ghcr.io/mlflow/mlflow:latest
+# Pin to a specific tag, NOT `:latest`. v3.15.2 is the latest stable patch
+# before 3.16.0 introduced the `basic-auth: fail-closed by default` breaking
+# change (PR mlflow/mlflow#25308) — we'll evaluate the 3.16 upgrade separately.
+# See CHANGELOG.md for the rationale behind this pin.
+FROM ghcr.io/mlflow/mlflow:v3.15.2
 
 ENV \
     LANG=C.UTF-8 \
